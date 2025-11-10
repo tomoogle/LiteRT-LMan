@@ -1,0 +1,11 @@
+FROM debian:trixie
+RUN apt-get update && apt-get install -y git gcc clang openjdk-21-jdk cmake make python3.13 pip
+
+COPY /src litert-lm
+WORKDIR litert-lm
+
+RUN python3 -m pip install --break-system-packages conan \
+    && conan profile detect \
+    && conan install . -of out/conan --build=missing
+
+CMD ["/bin/bash"]

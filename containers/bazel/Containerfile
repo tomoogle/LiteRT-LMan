@@ -1,0 +1,15 @@
+FROM debian:trixie
+
+RUN apt-get update && apt-get install -y gcc clang git golang-go openjdk-21-jdk
+
+#RUN git init litert-lm && cd litert-lm && git remote add origin "https://github.com/google-ai-edge/LiteRT-LM.git"\
+#&& git fetch --depth=1 origin 4b760378caf9684ee6cb0e5de0b99643648ef619 && git checkout 4b760378caf9684ee6cb0e5de0b99643648ef619
+
+
+COPY /src litert-lm
+WORKDIR litert-lm
+RUN go install github.com/bazelbuild/bazelisk@latest && export PATH=$PATH:$(go env GOPATH)/bin\
+&& bazelisk build //runtime/engine:litert_lm_main
+
+
+CMD ["/bin/bash"]
